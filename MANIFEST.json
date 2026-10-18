@@ -39,12 +39,12 @@
       "sha256": "6a1c755a46df493cb3228d26bc1ea8b4bae8edef7f9d5cfd906b8b05644ec5c2"
     },
     "CITATION.cff": {
-      "bytes": 425,
-      "sha256": "96e981061f69326799c8e9c4eb4aa40772eab577765ced6e860a83d76766755b"
+      "bytes": 455,
+      "sha256": "32ec0ad9cf0a36a6c622ae8d2d866f628b3b029402cdbf05e1cf28fb5791727f"
     },
     "DATA_SOURCES.md": {
-      "bytes": 3144,
-      "sha256": "1cca6f2506664d36ed0e4553d046a7857b6a62a7cedd0763a940fb6acb353c92"
+      "bytes": 3130,
+      "sha256": "9e15ec1c70190ce2821ed7cef17a508c84443705161b99fe08f27150235a1b71"
     },
     "exp_multilevel.py": {
       "bytes": 9147,
@@ -111,8 +111,8 @@
       "sha256": "2a25b0ce2b78e8d7c9ace071d2aba8db57109d20d13f042517d676ed321b83f5"
     },
     "README.md": {
-      "bytes": 3600,
-      "sha256": "66e653efca777a42d8fb1488ac94734ee8626097ff451c68ae8514e635871d06"
+      "bytes": 3912,
+      "sha256": "55b976c8fc500c91574bb66a8f17c9da78465ed11a06f7995c903eadbd3c3f7d"
     },
     "reference/finite_population_check.json": {
       "bytes": 19315,
@@ -135,12 +135,12 @@
       "sha256": "ec0949502486a13b2a5c5a0a1484fc80792d85c0f69c24254abff6ac4350017d"
     },
     "RELEASE_NOTES.md": {
-      "bytes": 1166,
-      "sha256": "c3d68125ddaa41bafb3a3280a2889df84548edef10808f5b9bade403b26515b9"
+      "bytes": 1193,
+      "sha256": "b854299d49335c9f84d1acf6500fec58006b8a62a8d24500deb048f54241a646"
     },
     "REPRODUCE.md": {
-      "bytes": 16794,
-      "sha256": "cadf817fdea65379e7306b152fbed3667738b6b0814167229a87223b39a710e0"
+      "bytes": 17072,
+      "sha256": "e7ac8af0575d0099d6b88f4b9fadfe946781655965107100c92ae07f1c171057"
     },
     "reproduce_calibration.py": {
       "bytes": 9695,
@@ -203,8 +203,8 @@
       "sha256": "67690c819df0005698c6d7e45a66b64e5f8834c03f6bc4a83892247d37d7c500"
     },
     "VALIDATION.md": {
-      "bytes": 3057,
-      "sha256": "14fe811883357eb962ab9123596e3da9b3b32b4874455262668c75aa8aa4fea2"
+      "bytes": 3170,
+      "sha256": "e0613849fb9f9dc9f1af016cd3dfac161208a7d7104f5a45904670bb41b59690"
     },
     "verify_jstars.py": {
       "bytes": 11842,
