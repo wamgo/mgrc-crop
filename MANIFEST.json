@@ -123,8 +123,8 @@
       "sha256": "ff16ad5eb1a1bc7315d147622d880dc7a2c548ddedbc3599b506e5d2cc6f937d"
     },
     "reference/register_vs_pheno.csv": {
-      "bytes": 2426,
-      "sha256": "e7d40ecc7d4f20926829787c7acb855fa5b07fc2ccadbec30af50c29090e12d8"
+      "bytes": 2405,
+      "sha256": "19053034fdce07b78f5bbe01f67a61a0ca92256393410bf44c73c888fcd9a226"
     },
     "reference_figures/fig_map.pdf": {
       "bytes": 940321,
