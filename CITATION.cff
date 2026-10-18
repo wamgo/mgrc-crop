@@ -1,13 +1,12 @@
 cff-version: 1.2.0
-message: "Please cite this research artifact and the original BreizhCrops data publication."
+message: "Please cite this software artifact and the upstream dataset papers."
 type: software
-title: "MGRC: mixed-granularity risk control for hierarchical crop-type maps"
+title: "MGRC: mixed-granularity risk control for hierarchical crop-type maps (JSTARS artifact)"
 authors:
   - family-names: Ding
     given-names: Ruiyuan
     orcid: "https://orcid.org/0009-0003-2366-7203"
-version: 1.0.0
-date-released: 2026-10-12
+version: 2.0.0
+date-released: 2026-10-18
 repository-code: "https://github.com/wamgo/mgrc-crop"
-url: "https://github.com/wamgo/mgrc-crop"
 license: MIT

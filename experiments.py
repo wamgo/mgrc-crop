@@ -7,13 +7,16 @@ n_f fine labels and n_c=(B-n_f)*rho coarse labels; parcels with fine labels also
 """
 from pathlib import Path
 import sys, json, itertools, time
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from pilot_common import setup, save_json
 ROOT = setup('direction_2_crop_hierarchy')
 import numpy as np, pandas as pd
 import hcrc
 
-TAX = json.loads((ROOT / 'data/taxonomy.json').read_text(encoding='utf8'))
+import os
+# MGRC_DATASET selects the label hierarchy: 'breizh' (default, 23 RPG codes in 12 groups) or
+# 'eurocrops' (24 HCAT3 codes in 13 level-4 groups). Worker processes inherit the variable.
+DATASET = os.environ.get('MGRC_DATASET', 'breizh')
+TAX = json.loads((ROOT / 'data' / (('taxonomy_eurocrops_pheno.json' if DATASET == 'eurocrops' else 'taxonomy_pheno.json') if os.environ.get('MGRC_TAXON','pheno')=='pheno' else ('taxonomy_eurocrops.json' if DATASET == 'eurocrops' else 'taxonomy.json'))).read_text(encoding='utf8'))
 PARENT = np.array(TAX['parent_of_fine'])
 GRID = hcrc.GRID
 _M = np.bincount(PARENT)
@@ -207,7 +210,7 @@ def apply_design(design, F, C, alpha, rule_eval):
     return rule_eval.climb2(tp, tf)
 
 
-def candidate_designs(betas, ratios=np.linspace(.1, .9, 9)):
+def candidate_designs(betas, ratios=np.r_[np.linspace(.1, .9, 9), .95, 1.0]):
     out = [('hsc', 1.0, None), ('flat', 1.0, None)]
     for rule in ['td', 'cl']:
         for b in betas:
@@ -274,10 +277,16 @@ def evaluate_draw(rng, src, tgt, T, pool_idx, B, rho, alpha, cfg):
         nf = max(int(round(.25 * B)), 1)
         nc = int(round((B - nf) * rho))
         rec(f'mixed_{rule}_b0.25', apply_design((rule, .25, .5), tgt.sub(perm[:nf]), tgt.sub(perm[:nf + nc]), alpha, T))
+    # coarse-only: one fine label (unused, alpha_f = 0) and the rest of the budget on group labels
+    nc = int(round((B - 1) * rho))
+    rec('coarse_only', apply_design(('td', 0.0, 1.0), tgt.sub(perm[:1]), tgt.sub(perm[:1 + nc]), alpha, T))
+    # source calibration with a safety margin: thresholds fitted on source parcels at alpha / 2
+    tp, tf = cal_levelwise(src, cfg['r_src'] * alpha / 2, (1 - cfg['r_src']) * alpha / 2)
+    rec('source_margin', T.levelwise(tp, tf))
     return rows
 
 
-BETAS = [0.1, 0.25, 0.5, 0.75, 1.0]
+BETAS = [0.0, 0.1, 0.25, 0.5, 0.75, 1.0]
 
 
 def run_pair(tag, model, target, budgets, rhos, alphas, reps, design='random', mode='crc', delta=0.1,
@@ -324,7 +333,8 @@ if __name__ == '__main__':
             'year': ([25, 50, 100, 200, 400], [10], [0.1], 50, 'random'),
             'alpha': ([100], [10], [0.05, 0.15, 0.2], 50, 'random'),
             'rho': ([50, 100], [1, 2, 5, 20], [0.1], 50, 'random'),
-            'spatial': ([50, 100, 400], [10], [0.1], 50, 'spatial')}[exp]
+            'spatial': ([50, 100, 400], [10], [0.1], 50, 'spatial'),
+            'strict': ([25, 50, 100, 200, 400], [10], [0.02, 0.05], 50, 'random')}[exp]
     t0 = time.time()
     rows = []
     with concurrent.futures.ProcessPoolExecutor(max_workers=6) as ex:
@@ -332,5 +342,5 @@ if __name__ == '__main__':
         for i, f in enumerate(concurrent.futures.as_completed(futs)):
             rows += f.result()
             print('DONE', i + 1, len(pairs), round(time.time() - t0), flush=True)
-    pd.DataFrame(rows).to_parquet(OUT / f'{exp}_{risk_mode}.parquet')
+    pd.DataFrame(rows).to_parquet(OUT / (('pheno/' if os.environ.get('MGRC_TAXON','pheno')=='pheno' else '') + f'{exp}_{risk_mode}.parquet'))
     print('SAVED', exp, risk_mode, len(rows))

@@ -18,7 +18,6 @@ parcels carry field-checked parent labels (noise-free). This file implements:
 """
 from pathlib import Path
 import sys, itertools, time
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from pilot_common import setup
 ROOT = setup('direction_2_crop_hierarchy')
 import numpy as np, pandas as pd
@@ -141,7 +140,7 @@ def run(tag, model, target, etas, kinds, reps=30, B=100, alpha=0.1, rho=10, seed
             T = tgt.sub(perm[:test_n])
             pool = perm[test_n:]
             cal = rng.permutation(pool)
-            base = {'tag': tag, 'model': model, 'target': target, 'kind': kind, 'eta': eta, 'B': B, 'rep': rep}
+            base = {'tag': tag, 'model': model, 'target': target, 'kind': kind, 'eta': eta, 'B': B, 'alpha': alpha, 'rep': rep}
             res = T.climb(E.cal_climb(tgt.sub(cal[:B]), alpha))
             rows.append({**base, 'method': 'hsc_climb', 'risk': res[0], 'fine': res[1], 'parent': res[2],
                          'root': 1 - res[1] - res[2], 'hcov': res[3], 'u0.9': res[1] + .9 * res[2],

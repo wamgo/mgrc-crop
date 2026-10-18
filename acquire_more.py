@@ -1,7 +1,6 @@
 """Fetch remaining BreizhCrops regions (2017 L2A), L1C 2017/2018 for cross-year, and parcel shapefiles."""
 from pathlib import Path
 import sys,tarfile,shutil,concurrent.futures
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from pilot_common import setup,download,save_json,sha
 ROOT=setup('direction_2_crop_hierarchy')
 BASE='https://breizhcrops.s3.eu-central-1.amazonaws.com/'

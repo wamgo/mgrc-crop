@@ -1,6 +1,5 @@
 from pathlib import Path
 import sys,tarfile,concurrent.futures
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from pilot_common import setup,download,save_json,sha
 ROOT=setup('direction_2_crop_hierarchy')
 BASE='https://breizhcrops.s3.eu-central-1.amazonaws.com/'
@@ -18,6 +17,5 @@ def get(region):
     return region
 if __name__=='__main__':
     download(BASE+'classmapping.csv',ROOT/'data/classmapping.csv')
-    download('https://raw.githubusercontent.com/dl4sits/BreizhCrops/master/breizhcrops/datasets/breizhcrops.py',ROOT/'sources/official_loader.py')
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as p:
         for r in p.map(get,['frh01','frh04']):print('READY',r,flush=True)

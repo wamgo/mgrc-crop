@@ -19,7 +19,11 @@ def download(url,path):
     import requests
     path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
     meta=path.with_name(path.name+'.download.json')
-    if path.exists() and meta.exists():return path
+    if path.exists() and meta.exists():
+        receipt=json.loads(meta.read_text(encoding='utf8'))
+        if receipt.get('url') != url or receipt.get('sha256') != sha(path):
+            raise ValueError(f'Cached download differs from its receipt: {path.name}')
+        return path
     temp=path.with_name(path.name+'.part')
     for attempt in range(3):
         try:

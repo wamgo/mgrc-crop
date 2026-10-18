@@ -5,8 +5,6 @@ Temperature scaling is fitted on source dev only. No target labels are used here
 """
 from pathlib import Path
 import sys, json, math, time
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-sys.path.insert(0, str(Path(__file__).resolve().parent / 'deps'))
 from pilot_common import setup, save_json
 ROOT = setup('direction_2_crop_hierarchy')
 import numpy as np, torch, lightgbm as lgb
@@ -16,7 +14,7 @@ SEED = 20261011
 REGIONS = ['frh01', 'frh02', 'frh03', 'frh04']
 OUT = ROOT / 'results' / 'probs'
 OUT.mkdir(parents=True, exist_ok=True)
-K = 23
+K = 23  # overwritten per dataset in run()
 
 
 def load(year, level, region):
@@ -91,9 +89,11 @@ def softmax(z, T=1.0):
 
 
 def run(year, level, src, others, tag):
+    global K
     torch.manual_seed(SEED); np.random.seed(SEED)
     torch.set_num_threads(6)
     S = load(year, level, src)
+    K = 24 if level == 'EC' else 23
     tr, dev, hold = np.arange(40000), np.arange(40000, 45000), np.arange(45000, len(S['y']))
     scaler = StandardScaler().fit(S['X'][tr])
     cmean, cstd = S['cube'][tr].mean((0, 1)), S['cube'][tr].std((0, 1)) + 1e-6
@@ -114,7 +114,7 @@ def run(year, level, src, others, tag):
             f, hist = fit_torch(mlp(), feats(S)[tr], S['y'][tr], feats(S)[dev], S['y'][dev])
             predict = lambda d: f(feats(d))
         elif name == 'tempcnn':
-            f, hist = fit_torch(TempCNN(), cube(S)[tr], S['y'][tr], cube(S)[dev], S['y'][dev], epochs=30)
+            f, hist = fit_torch(TempCNN(k=K), cube(S)[tr], S['y'][tr], cube(S)[dev], S['y'][dev], epochs=30)
             predict = lambda d: f(cube(d))
         else:
             clf = lgb.LGBMClassifier(n_estimators=2000, learning_rate=.05, num_leaves=63, subsample=.8, subsample_freq=1,
@@ -147,6 +147,12 @@ if __name__ == '__main__':
     if mode == 'region':
         for src in REGIONS:
             run(2017, 'L2A', src, [(2017, 'L2A', r) for r in REGIONS if r != src], f'L2A2017_{src}')
+    elif mode == 'eurocrops':  # cross-country: LV <-> EE, targets are NUTS-3 regions of the other country
+        doms = json.loads((ROOT / 'data' / 'eurocrops_domains.json').read_text(encoding='utf8'))
+        for src in ['LV', 'EE']:
+            other = 'EE' if src == 'LV' else 'LV'
+            run(2021, 'EC', src, [(2021, 'EC', r) for r in sorted(doms) if r.startswith(other) and len(r) > 2],
+                f'EC2021_{src}')
     else:  # cross-year on L1C: train 2017, test 2018 same and other region
         for src in ['frh01', 'frh04']:
             run(2017, 'L1C', src, [(2018, 'L1C', 'frh01'), (2018, 'L1C', 'frh04'),

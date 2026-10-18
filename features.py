@@ -8,8 +8,6 @@ quantiles (2x10) -> 140 features; also the 12x10 monthly cube for the temporal C
 """
 from pathlib import Path
 import sys, hashlib, json, collections
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-sys.path.insert(0, str(Path(__file__).resolve().parent / 'deps'))
 from pilot_common import setup, save_json
 ROOT = setup('direction_2_crop_hierarchy')
 import numpy as np, pandas as pd, h5py, shapefile

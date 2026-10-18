@@ -1,2 +1,8 @@
-* text=auto eol=lf
-*.zip -text
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.zip binary
+*.pdf binary
+*.npz binary
+*.parquet binary
